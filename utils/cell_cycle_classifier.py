@@ -5,14 +5,22 @@ import os
 import gdown
 
 MODEL_PATH = "cell_cycle_resnet18_best.pth"
+MODEL_URL = "https://drive.google.com/uc?id=1gdhdgbkXzRpr3YR-9noJsF0Dnc6kvnnN"
 
-if not os.path.exists(MODEL_PATH):
-    url = "https://drive.google.com/uc?id=1gdhdgbkXzRpr3YR-9noJsF0Dnc6kvnnN"
-    gdown.download(url, MODEL_PATH, quiet=False)
+# Download model if missing or if a bad/corrupted file was saved
+if (not os.path.exists(MODEL_PATH)) or os.path.getsize(MODEL_PATH) < 1_000_000:
+    if os.path.exists(MODEL_PATH):
+        os.remove(MODEL_PATH)
+    gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-checkpoint = torch.load(MODEL_PATH, map_location=device)
+try:
+    checkpoint = torch.load(MODEL_PATH, map_location=device)
+except Exception:
+    os.remove(MODEL_PATH)
+    gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
+    checkpoint = torch.load(MODEL_PATH, map_location=device)
 
 class_names = ["anaphase", "interphase", "metaphase", "prophase", "telophase"]
 image_size = 224
