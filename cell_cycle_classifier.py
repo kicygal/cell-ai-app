@@ -2,15 +2,16 @@ import torch
 from torchvision import models, transforms
 from PIL import Image
 import os
-import gdown
+import requests
 
-MODEL_PATH = "cell_cycle_resnet18_best_v2.pth"
-FILE_ID = "1gdhdgbkXzRpr3YR-9noJsF0Dnc6kvnnN"
+MODEL_PATH = "cell_cycle_resnet18_best.pth"
+MODEL_URL = "https://huggingface.co/kicygal/cell-cycle-resnet18/resolve/main/cell_cycle_resnet18_best.pth"
 
-if os.path.exists(MODEL_PATH):
-    os.remove(MODEL_PATH)
-
-gdown.download(id=FILE_ID, output=MODEL_PATH, quiet=False)
+# Download model if not present
+if not os.path.exists(MODEL_PATH):
+    r = requests.get(MODEL_URL)
+    with open(MODEL_PATH, "wb") as f:
+        f.write(r.content)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 checkpoint = torch.load(MODEL_PATH, map_location=device)
