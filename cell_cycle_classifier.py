@@ -14,7 +14,7 @@ if not os.path.exists(MODEL_PATH):
         f.write(r.content)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-checkpoint = torch.load(MODEL_PATH, map_location=device)
+checkpoint = torch.load(MODEL_PATH, map_location=device, weights_only=False)
 
 class_names = ["anaphase", "interphase", "metaphase", "prophase", "telophase"]
 image_size = 224
