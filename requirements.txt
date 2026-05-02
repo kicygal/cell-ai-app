@@ -1,10 +1,9 @@
 streamlit
 torch
 torchvision
-opencv-python
+opencv-python-headless
 pillow
 numpy
 pandas
 matplotlib
 requests
-gdown
